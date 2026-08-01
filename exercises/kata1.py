@@ -7,6 +7,7 @@ def analyze_word(word):
     print("Ultimo caracter: ", word[-1])
     print("Primeros 4 caracteres: ", word[:4])
     print("ultimos 4 caracteres: ", word[-4:])
+    print("Cada dos valores: ", word[::2])
     
     inverted= ""
     for letter in word:
