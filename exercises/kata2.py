@@ -4,14 +4,18 @@ def show_stock(stock):
     print(stock)
 
 def add_element_to_stock(stock):
-    choice = input("Que objeto quieres añadir?: ")
+    item = input("Que objeto quieres añadir?: ")
     
-    if choice not in stock:
-        stock.append(choice)
-        print("El objeto ha sido añadido con exito al inventario")
+    if item.isalpha():
+        if item not in stock:
+            stock.append(item.lower())
+            print("El objeto ha sido añadido con exito al inventario")
+        else:
+            print("El objeto ya esta en el inventario")
     else:
-        print("El objeto ya esta en el inventario")
+        print("Error, introduce un palabra solo con letras")
         
+
 def choice_selector(attempts, max_attempts):
     while attempts < max_attempts:
         print("\n1. Ver stock \n2. Añadir objeto \n3. Salir")
