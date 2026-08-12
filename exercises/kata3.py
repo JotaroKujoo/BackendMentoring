@@ -21,7 +21,7 @@ def display_menu():
         6. Mostrar una sección
         7. Crear mochila de reserva
         8. Salir
-""")
+        """)
 
 
 def validate_item_in_equipment(item, equipment):
@@ -32,11 +32,36 @@ def remove_item_from_equipment(item, equipment):
     equipment.remove(item)
 
 
-def remove_item_handler(equipment):
-    attempts_handler = 0
-    max_attempts_handler = 3
+def error_handler():
+    while True:
+        print("""
+              
+        ===== ERROR =====
+            1. Reintentar
+            2. Salir
+            
+            """)
 
-    while attempts_handler < max_attempts_handler:
+        try:
+            option = int(input("Introduce una opcion: "))
+
+        except ValueError:
+            print("La opcion debe ser un numero")
+            continue
+
+        match option:
+            case 1:
+                return True
+            case 2:
+                return False
+            case _:
+                print("Opcion invalida")
+
+
+def remove_item_handler(equipment):
+    is_on = True
+
+    while is_on:
         item = normalize_word(input("Que objeto deseas eliminar?\n"))
         if item.isalpha():
             if validate_item_in_equipment(item, equipment):
@@ -45,13 +70,11 @@ def remove_item_handler(equipment):
                 return
             else:
                 print("El objeto no se encuentra en la mochila")
-                attempts_handler += 1
-                print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
+                is_on = error_handler()
         else:
             print("Debe ser una palabra sin espacios, caracteres especiales ni numeros")
-            attempts_handler += 1
-            print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
-    print("Demasiados intentos, saliendo...")
+            is_on = error_handler()
+    print("Saliendo...")
 
 
 def add_item_to_equipment(item, equipment):
@@ -59,10 +82,9 @@ def add_item_to_equipment(item, equipment):
 
 
 def add_item_handler(equipment):
-    attempts_handler = 0
-    max_attempts_handler = 3
+    is_on = True
 
-    while attempts_handler < max_attempts_handler:
+    while is_on:
         item = normalize_word(input("Que objeto deseas añadir?\n"))
         if item.isalpha():
             if not validate_item_in_equipment(item, equipment):
@@ -71,25 +93,21 @@ def add_item_handler(equipment):
                 return
             else:
                 print("El objeto ya se encuentra en la mochila")
-                attempts_handler += 1
-                print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
+                is_on = error_handler()
         else:
             print("Debe ser una palabra sin espacios, caracteres especiales ni numeros")
-            attempts_handler += 1
-            print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
-    print("Demasiados intentos, saliendo...")
+            is_on = error_handler()
+    print("Saliendo...")
 
 
 def replace_item_from_equipment(item1, item2, equipment):
     equipment[equipment.index(item1)] = item2
-    print(equipment)
 
 
 def replace_item_handler(equipment):
-    attempts_handler = 0
-    max_attempts_handler = 3
+    is_on = True
 
-    while attempts_handler < max_attempts_handler:
+    while is_on:
         item1 = normalize_word(input("Que objeto deseas reemplazar?\n"))
 
         if item1.isalpha():
@@ -106,60 +124,74 @@ def replace_item_handler(equipment):
                         print(
                             "El objeto ya se encuentra en el inventario, no es posible crear duplicados"
                         )
-                        attempts_handler += 1
+                        is_on = error_handler()
                 else:
                     print(
                         "Debe ser una palabra sin espacios, caracteres especiales ni numeros"
                     )
-                    attempts_handler += 1
-                    print(
-                        f"Intentos restantes {max_attempts_handler - attempts_handler}"
-                    )
-                return
+                    is_on = error_handler()
             else:
                 print("El objeto no se encuentra en la mochila")
-                attempts_handler += 1
-                print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
+                is_on = error_handler()
         else:
             print("Debe ser una palabra sin espacios, caracteres especiales ni numeros")
-            attempts_handler += 1
-            print(f"Intentos restantes {max_attempts_handler - attempts_handler}")
-    print("Demasiados intentos, saliendo...")
+            is_on = error_handler()
+    print("Saliendo...")
+
+
+def move_item_in_equipment(item, desired_position, equipment):
+    item_index = equipment.index(item)
+    equipment.pop(item_index)
+    equipment.insert(desired_position, item)
+
+
+def move_items_handler(equipment):
+    is_on = True
+
+    while is_on:
+        item = input("Primer objeto a intercambiar: ")
+        if validate_item_in_equipment(item, equipment):
+            desired_position = int(input("A que posicion lo deseas mover"))
+            if desired_position < len(equipment):
+                move_item_in_equipment(item, desired_position, equipment)
+                print("El objeto ha sido movido con exito")
+            else:
+                print("Introduce una posicion existente")
+                is_on = error_handler()
+        else:
+            print("El objeto no se encuentra en la mochila")
+            is_on = error_handler()
+    print("Saliendo...")
 
 
 def main(equipment):
-    attempts = 0
-    max_attempts = 3
+    is_on = True
 
-    while attempts < max_attempts:
+    while is_on:
         display_menu()
         try:
             choice = int(input("Introduce una opcion: "))
         except ValueError:
             print("Introduce un numero por favor")
-            attempts += 1
-            continue
+            is_on = error_handler()
 
         match choice:
             case 1:
                 show_equipment(equipment)
-                attempts = 0
             case 2:
                 add_item_handler(equipment)
-                attempts = 0
             case 3:
                 remove_item_handler(equipment)
-                attempts = 0
             case 4:
                 replace_item_handler(equipment)
-                attempts = 0
+            case 5:
+                move_items_handler(equipment)
             case 8:
                 print("Saliendo...")
                 return
             case _:
                 print("Opcion erronea")
-                attempts += 1
-                print(f"Intentos restantes: {max_attempts - attempts}")
+                is_on = error_handler()
 
 
 main(equipment)
